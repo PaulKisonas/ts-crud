@@ -2,6 +2,7 @@ import Car from '../types/car';
 import Model from '../types/model';
 import Brand from '../types/brand';
 import CarJoined from '../types/car-joined';
+import brands from '../data/brands';
 
 type CarsCollectionProps = {
   cars: Car[],
@@ -12,12 +13,15 @@ type CarsCollectionProps = {
 class CarsCollection {
   private props: CarsCollectionProps;
 
+  private privateBrands: Brand[];
+
   constructor(props: CarsCollectionProps) {
     this.props = props;
+    this.privateBrands = JSON.parse(JSON.stringify(brands));
   }
 
   private joinCars = ({ modelId, ...car}: Car) => {
-    const { brands, models } = this.props;
+    const { models } = this.props;
     const carModel = models.find((model) => model.id === modelId);
     const carBrand = brands.find((brand) => brand.id === carModel?.brandId);
 
@@ -45,6 +49,14 @@ class CarsCollection {
     .map(this.joinCars);
 
     return carsModelIds;
+};
+
+getBrandTitleById = (brandId: string) => {
+  const foundBrand = this.privateBrands.find((b) => b.id === brandId);
+
+if (foundBrand === undefined) throw new Error(`Brand is not found "${brandId}"`);
+
+return foundBrand;
 };
 
 }

@@ -52,7 +52,7 @@ class App {
     this.update();
   };
 
-  initialize = (): void => {
+  public initialize = (): void => {
     const select = new SelectField({
       options: [
         { value: '-1', text: 'All Cars' },
@@ -62,7 +62,10 @@ class App {
     });
     const container = document.createElement('div');
     container.className = 'container d-flex flex-column my-5 gap-3';
-    container.append( this.carsTable.htmlElement,);
+    container.append( 
+      select.htmlElement,
+      this.carsTable.htmlElement,
+      );
     this.htmlElement.append(container);
   };
 
@@ -75,8 +78,10 @@ class App {
         rowsData: carsCollection.all.map(stringifyProps),
       });
     } else {
+      const brand = this.carsCollection.getBrandTitleById(selectedBrandId);
+
       this.carsTable.updateProps({
-        title: 'All Cars',
+        title: brand.title,
         rowsData: carsCollection
         .getByBrandId(selectedBrandId)
         .map(stringifyProps),
