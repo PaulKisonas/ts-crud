@@ -29,6 +29,7 @@ class Table<Type extends RowData> {
     this.tbody = document.createElement("tbody");
 
     this.initialize();
+    this.renderView();
   }
 
   private checkColumnsCompatability = (): void => {

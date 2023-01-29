@@ -3,19 +3,26 @@ import cars from "../data/cars";
 import brands from "../data/brands";
 import models from "../data/models";
 import CarsCollection from "../helpers/cars-collection";
-import stringifyProps from "../helpers/stingify-object";
-import SelectField, { type Option } from './select-field';
-import type Brand from '../types/brand';
+import stringifyProps, {
+  type StringifyObjectProps,
+} from "../helpers/stringify-object";
+import SelectField, { type Option } from "./select-field";
+import type Brand from "../types/brand";
+import type CarJoined from "../types/car-joined";
 
 const brandToOption = ({ id, title }: Brand): Option => ({
- value: id,
- text: title,
+  value: id,
+  text: title,
 });
 
 class App {
   private htmlElement: HTMLElement;
 
   private carsCollection: CarsCollection;
+
+  private selectedBrandId: string;
+
+  private carsTable: Table<StringifyObjectProps<CarJoined>>;
 
   constructor(selector: string) {
     const foundElement = document.querySelector<HTMLElement>(selector);
@@ -24,37 +31,60 @@ class App {
     if (foundElement === null)
       throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
 
+    this.selectedBrandId = "-1";
     this.htmlElement = foundElement;
+    this.carsTable = new Table({
+      title: 'All CARS',
+      columns: {
+        id: 'Id',
+        brand: 'Brand',
+        model: 'Model',
+        price: 'Price',
+        year: 'Year',
+      },
+      rowsData: this.carsCollection.all.map(stringifyProps),
+    });
   }
 
-  handleOptionBrands = (carId: string) => {
-    const filteredBrands = this.carsCollection.getByBrandId(carId);
-    console.log(filteredBrands);
+  private handleBrandChange = (carId: string): void => {
+    this.selectedBrandId = carId;
+
+    this.update();
   };
 
   initialize = (): void => {
     const select = new SelectField({
-      options: brands.map(brandToOption),
-      onChange: this.handleOptionBrands,
+      options: [
+        { value: '-1', text: 'All Cars' },
+        ...brands.map(brandToOption),
+      ],
+      onChange: this.handleBrandChange,
     });
-    const carTable = new Table({
-      title: "Visi automobiliai",
-      columns: {
-        id: "Id",
-        brand: "Markė",
-        model: "Modelis",
-        price: "Kaina",
-        year: "Metai",
-      },
-      rowsData: this.carsCollection.all.map(stringifyProps),
-    });
-
-    const container = document.createElement("div");
-    container.className = "container d-flex flex-column my-5 gap-3";
-    container.append(select.htmlElement, carTable.htmlElement);
-
+    const container = document.createElement('div');
+    container.className = 'container d-flex flex-column my-5 gap-3';
+    container.append( this.carsTable.htmlElement,);
     this.htmlElement.append(container);
   };
+
+  private update = (): void => {
+    const { selectedBrandId, carsCollection } = this;
+
+    if (this.selectedBrandId === '-1') {
+      this.carsTable.updateProps({
+        title: 'All Cars',
+        rowsData: carsCollection.all.map(stringifyProps),
+      });
+    } else {
+      this.carsTable.updateProps({
+        title: 'All Cars',
+        rowsData: carsCollection
+        .getByBrandId(selectedBrandId)
+        .map(stringifyProps),
+      });
+    }
+  };
 }
+
+
 
 export default App;
