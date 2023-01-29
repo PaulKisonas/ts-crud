@@ -1,4 +1,16 @@
 type CarFormProps = {}
+import TextField from './text-field';
+import SelectField from './select-field';
+import brands from '../data/brands';
+import models from '../data/models';
+
+export type Values = {
+    brand: string,
+    model: string,
+    price: string,
+    year: string,
+  };
+
 
 class CarForm {
     private props: CarFormProps;
