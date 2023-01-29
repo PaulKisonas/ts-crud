@@ -9,9 +9,11 @@ export type TableProps<Type> = {
   title: string;
   columns: Type;
   rowsData: Type[];
+  onDelete: (id: string) => void
 };
 
 class Table<Type extends RowData> {
+
   public htmlElement: HTMLTableElement;
 
   private props: TableProps<Type>;
@@ -76,30 +78,29 @@ class Table<Type extends RowData> {
     const { rowsData, columns } = this.props;
 
     this.tbody.innerHTML = "";
-    const rowsHtmlElements = rowsData.map((rowData) => {
-      const rowHtmlElement = document.createElement("tr");
+    const rows = rowsData.map((rowData) => {
+      const deletebutton = document.createElement('button');
+                deletebutton.className = 'btn btn-danger btn-sm text-white fw-bolder';
+                deletebutton.innerText = '✕';
+                deletebutton.addEventListener('click', () => this.props.onDelete(rowData.id));
 
-      const cellsHtmlString = Object.keys(columns)
-        .map((key) => `
-        <td>${rowData[key]}</td>
-        `,)
-        .join(" ");
+                const td = document.createElement('td');
+                td.append(deletebutton);
 
-      
-        rowHtmlElement.innerHTML = `${cellsHtmlString}
-        <td>
-        <button class="btn btn-danger btn-sm text-white fw-bolder">
-        ✕</button>
-        </td>`;
+                const tr = document.createElement('tr');
+                tr.innerHTML = Object.keys(columns)
+                .map((key) => `<td>${rowData[key]}</td>`)
+                .join(' ');
+                tr.append(td);
 
-      return rowHtmlElement;
-    });
+                return tr;
+    },
+    );
 
-    this.tbody.append(...rowsHtmlElements);
+    this.tbody.append(...rows);
   };
 
-  private initialize = (): void => {
-    this.renderView();
+    private initialize = (): void => {
 
     this.htmlElement.className = "table table-striped order border p-3";
     this.htmlElement.append(this.thead, this.tbody);
@@ -108,13 +109,13 @@ class Table<Type extends RowData> {
   renderView = () => {
     this.renderThead();
     this.renderTbody();
-  };
-
-  updateProps = (props: Partial<TableProps<Type>>) => {
+};
+updateProps = (props: Partial<TableProps<Type>>) => {
     this.props = {
-      ...this.props,
-      ...props,
+        ...this.props,
+        ...props,
     };
+    this.renderView();
   };
 }
 
