@@ -20,9 +20,21 @@ class App {
   }
 
   initialize = (): void => {
-  
+    const carTable = new Table({
+      title: 'Visi automobiliai',
+      columns: {
+        id: 'Id',
+        brand: 'Markė',
+        model: 'Modelis',
+        price: 'Kaina',
+        year: 'Metai',
+      },
+      rowsData: this.carsCollection.all.map(stringifyProps),
+    });;
+
     const container = document.createElement('div');
     container.className = 'container my-5';
+    container.appendChild(carTable.htmlElement);
 
     this.htmlElement.append(container);
   };
