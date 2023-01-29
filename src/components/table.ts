@@ -59,12 +59,17 @@ class Table<Type extends RowData> {
       .map((header) => `<th>${header}</th>`)
       .join("");
 
-    this.thead.innerHTML = `
-      <tr>
-        <th colspan="${headersArray.length}" class="text-center h3">${title}</th>
+      const columnLenght = headersArray.length + 1;
+
+      this.thead.className = 'bg-dark text-white';
+      this.thead.innerHTML = `
+      <tr class="text-center h3">
+          <th colspan="${columnLenght}">${title}</th>
       </tr>
-      <tr>${headersRowHtmlString}</tr>
-    `;
+      <tr>
+            ${headersRowHtmlString}
+            <th></th>
+        </tr>`;
   };
 
   private renderTbody = (): void => {
@@ -75,10 +80,17 @@ class Table<Type extends RowData> {
       const rowHtmlElement = document.createElement("tr");
 
       const cellsHtmlString = Object.keys(columns)
-        .map((key) => `<td>${rowData[key]}</td>`)
+        .map((key) => `
+        <td>${rowData[key]}</td>
+        `,)
         .join(" ");
 
-      rowHtmlElement.innerHTML = cellsHtmlString;
+      
+        rowHtmlElement.innerHTML = `${cellsHtmlString}
+        <td>
+        <button class="btn btn-danger btn-sm text-white fw-bolder">
+        ✕</button>
+        </td>`;
 
       return rowHtmlElement;
     });
