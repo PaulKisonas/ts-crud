@@ -1,22 +1,19 @@
-import Table from "./table";
-import cars from "../data/cars";
-import brands from "../data/brands";
-import models from "../data/models";
-import CarsCollection from "../helpers/cars-collection";
-import stringifyProps, {
-  type StringifyObjectProps,
-} from "../helpers/stringify-object";
-import SelectField, { type Option } from "./select-field";
-import type Brand from "../types/brand";
-import type CarJoined from "../types/car-joined";
+import cars from '../data/cars';
+import brands from '../data/brands';
+import models from '../data/models';
+import Table from './table';
+import CarsCollection from '../helpers/cars-collection';
+import type Brand from '../types/brand';
+import type CarJoined from '../types/car-joined';
+import stringifyProps, { StringifyObjectProps } from '../helpers/stringify-object';
+import SelectField, { type Option } from './select-field';
 
 const ALL_BRAND_ID = '-1' as const;
 const ALL_BRAND_TITLE = 'All Cars';
 
-
 const brandToOption = ({ id, title }: Brand): Option => ({
-  value: id,
-  text: title,
+ value: id,
+ text: title,
 });
 
 class App {
@@ -32,11 +29,11 @@ class App {
     const foundElement = document.querySelector<HTMLElement>(selector);
     this.carsCollection = new CarsCollection({ cars, brands, models });
 
-    if (foundElement === null)
-      throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
+    if (foundElement === null) throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
 
     this.selectedBrandId = ALL_BRAND_ID;
     this.htmlElement = foundElement;
+
     this.carsTable = new Table({
       title: ALL_BRAND_TITLE,
       columns: {
@@ -47,6 +44,7 @@ class App {
         year: 'Year',
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
+      onDelete: this.handleDeleteCars,
     });
   }
 
@@ -56,20 +54,27 @@ class App {
     this.update();
   };
 
+  handleDeleteCars = (brandId: string) => {
+    console.log({ brandId });
+    console.log(this);
+  };
+
   public initialize = (): void => {
-    const select = new SelectField({
-      options: [
-        { value: ALL_BRAND_ID, text: ALL_BRAND_TITLE },
-        ...brands.map(brandToOption),
-      ],
-      onChange: this.handleBrandChange,
-    });
-    const container = document.createElement('div');
-    container.className = 'container d-flex flex-column my-5 gap-3';
-    container.append( 
-      select.htmlElement,
-      this.carsTable.htmlElement,
-      );
+  const select = new SelectField({
+    options: [
+      { value: ALL_BRAND_ID, text: ALL_BRAND_TITLE },
+      ...brands.map(brandToOption),
+    ],
+    onChange: this.handleBrandChange,
+  });
+
+  const container = document.createElement('div');
+  container.className = 'container d-flex flex-column my-5 gap-3';
+  container.append(
+    select.htmlElement,
+    this.carsTable.htmlElement,
+    );
+
     this.htmlElement.append(container);
   };
 
@@ -93,7 +98,5 @@ class App {
     }
   };
 }
-
-
 
 export default App;
