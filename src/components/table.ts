@@ -107,11 +107,11 @@ class Table<Type extends RowData> {
     this.htmlElement.append(this.thead, this.tbody);
   };
 
-  renderView = () => {
+  private renderView = () => {
     this.renderThead();
     this.renderTbody();
 };
-updateProps = (props: Partial<TableProps<Type>>) => {
+public updateProps = (props: Partial<TableProps<Type>>) => {
     this.props = {
         ...this.props,
         ...props,

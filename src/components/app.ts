@@ -44,7 +44,7 @@ class App {
         year: 'Year',
       },
       rowsData: this.carsCollection.all.map(stringifyProps),
-      onDelete: this.handleDeleteCars,
+      onDelete: this.handleCarDelete,
     });
   }
 
@@ -54,9 +54,9 @@ class App {
     this.update();
   };
 
-  handleDeleteCars = (brandId: string) => {
-    console.log({ brandId });
-    console.log(this);
+  private handleCarDelete = (brandId: string) => {
+    this.carsCollection.deleteCarById(brandId);
+    this.update();
   };
 
   public initialize = (): void => {

@@ -24,7 +24,7 @@ class SelectField {
     this.initialize();
   }
 
-  initialize = () => {
+  private initialize = () => {
     this.htmlElement.className = "form-select";
     this.htmlElement.innerHTML = this.props.options
       .map(
