@@ -21,8 +21,20 @@ class App {
     this.htmlElement = foundElement;
   }
 
+  handleOptionCategory = () => {
+    console.log(this);
+    console.log("Change Option");
+  };
+
   initialize = (): void => {
-    const select = new SelectField();
+    const select = new SelectField({
+      options: [
+        { value: "Vlv", text: "Volvo" },
+        { value: "BMW", text: "BMW" },
+        { value: "Audi", text: "Audi" },
+      ],
+      onChange: this.handleOptionCategory,
+    });
     const carTable = new Table({
       title: "Visi automobiliai",
       columns: {
