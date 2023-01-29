@@ -10,6 +10,10 @@ import SelectField, { type Option } from "./select-field";
 import type Brand from "../types/brand";
 import type CarJoined from "../types/car-joined";
 
+const ALL_BRAND_ID = '-1' as const;
+const ALL_BRAND_TITLE = 'All Cars';
+
+
 const brandToOption = ({ id, title }: Brand): Option => ({
   value: id,
   text: title,
@@ -31,10 +35,10 @@ class App {
     if (foundElement === null)
       throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
 
-    this.selectedBrandId = "-1";
+    this.selectedBrandId = ALL_BRAND_ID;
     this.htmlElement = foundElement;
     this.carsTable = new Table({
-      title: 'All CARS',
+      title: ALL_BRAND_TITLE,
       columns: {
         id: 'Id',
         brand: 'Brand',
@@ -55,7 +59,7 @@ class App {
   public initialize = (): void => {
     const select = new SelectField({
       options: [
-        { value: '-1', text: 'All Cars' },
+        { value: ALL_BRAND_ID, text: ALL_BRAND_TITLE },
         ...brands.map(brandToOption),
       ],
       onChange: this.handleBrandChange,
@@ -72,9 +76,9 @@ class App {
   private update = (): void => {
     const { selectedBrandId, carsCollection } = this;
 
-    if (this.selectedBrandId === '-1') {
+    if (this.selectedBrandId === ALL_BRAND_ID) {
       this.carsTable.updateProps({
-        title: 'All Cars',
+        title: ALL_BRAND_TITLE,
         rowsData: carsCollection.all.map(stringifyProps),
       });
     } else {
