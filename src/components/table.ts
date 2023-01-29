@@ -76,6 +76,7 @@ class Table<Type extends RowData> {
 
   private renderTbody = (): void => {
     const { rowsData, columns } = this.props;
+    this.tbody.innerHTML = '';
 
     this.tbody.innerHTML = "";
     const rows = rowsData.map((rowData) => {

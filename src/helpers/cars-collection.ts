@@ -59,6 +59,14 @@ if (foundBrand === undefined) throw new Error(`Brand is not found "${brandId}"`)
 return foundBrand;
 };
 
+deleteCarById = (brandId: string) => {
+  const { cars, models } = this.props;
+
+  this.props.cars = cars.filter((car) => car.id !== brandId);
+  this.props.models = models
+  .filter((model) => model.brandId !== brandId);
+};
+
 }
 
 export default CarsCollection;
