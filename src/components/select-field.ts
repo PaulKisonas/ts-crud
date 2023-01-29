@@ -1,11 +1,11 @@
-type Option = {
+export type Option = {
   value: string;
   text: string;
 };
 
 type SelectFieldProps = {
   options: Option[];
-  onChange: () => void;
+  onChange: (value: string) => void;
 };
 
 class SelectField {
@@ -33,7 +33,10 @@ class SelectField {
     `
       )
       .join("");
-    this.htmlElement.addEventListener("change", this.props.onChange);
+      this.htmlElement.addEventListener(
+        'change',
+         () => this.props.onChange(this.htmlElement.value),
+    );
   };
 }
 

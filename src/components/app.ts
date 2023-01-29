@@ -4,7 +4,13 @@ import brands from "../data/brands";
 import models from "../data/models";
 import CarsCollection from "../helpers/cars-collection";
 import stringifyProps from "../helpers/stingify-object";
-import SelectField from "./select-field";
+import SelectField, { type Option } from './select-field';
+import type Brand from '../types/brand';
+
+const brandToOption = ({ id, title }: Brand): Option => ({
+ value: id,
+ text: title,
+});
 
 class App {
   private htmlElement: HTMLElement;
@@ -21,19 +27,15 @@ class App {
     this.htmlElement = foundElement;
   }
 
-  handleOptionCategory = () => {
-    console.log(this);
-    console.log("Change Option");
+  handleOptionBrands = (carId: string) => {
+    const filteredBrands = this.carsCollection.getByBrandId(carId);
+    console.log(filteredBrands);
   };
 
   initialize = (): void => {
     const select = new SelectField({
-      options: [
-        { value: "Vlv", text: "Volvo" },
-        { value: "BMW", text: "BMW" },
-        { value: "Audi", text: "Audi" },
-      ],
-      onChange: this.handleOptionCategory,
+      options: brands.map(brandToOption),
+      onChange: this.handleOptionBrands,
     });
     const carTable = new Table({
       title: "Visi automobiliai",
