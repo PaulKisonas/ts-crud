@@ -1,12 +1,18 @@
+type Option = {
+  value: string;
+  text: string;
+};
+
 class SelectField {
 
   public htmlElement: HTMLSelectElement;
   constructor() {
       this.htmlElement = document.createElement('select');
+      this.htmlElement.className = 'form-select';
       this.htmlElement.innerHTML = `
-      <option>BMW</option>
-      <option>Volvo</option>
-      <option>Audi</option>
+      <option value="">BMW</option>
+      <option value="">Volvo</option>
+      <option value="">Audi</option>
       `;
   }
 }
