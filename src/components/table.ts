@@ -1,14 +1,14 @@
-import countObjectProperties from '../helpers/count-object-properties';
+import countObjectProperties from "../helpers/count-object-properties";
 
 type RowData = {
-  id: string,
-  [key: string]: string,
+  id: string;
+  [key: string]: string;
 };
 
 export type TableProps<Type> = {
-  title: string,
-  columns: Type,
-  rowsData: Type[],
+  title: string;
+  columns: Type;
+  rowsData: Type[];
 };
 
 class Table<Type extends RowData> {
@@ -24,9 +24,9 @@ class Table<Type extends RowData> {
     this.props = props;
     this.checkColumnsCompatability();
 
-    this.htmlElement = document.createElement('table');
-    this.thead = document.createElement('thead');
-    this.tbody = document.createElement('tbody');
+    this.htmlElement = document.createElement("table");
+    this.thead = document.createElement("thead");
+    this.tbody = document.createElement("tbody");
 
     this.initialize();
   }
@@ -44,15 +44,19 @@ class Table<Type extends RowData> {
     });
 
     if (!columnsCompatableWithRowsData) {
-      throw new Error('Nesutampa lentelės stulpelių skaičius su eilučių stulpelių skaičiumi');
+      throw new Error(
+        "Nesutampa lentelės stulpelių skaičius su eilučių stulpelių skaičiumi"
+      );
     }
   };
 
-  private initializeHead = (): void => {
+  private renderThead = (): void => {
     const { title, columns } = this.props;
 
     const headersArray = Object.values(columns);
-    const headersRowHtmlString = headersArray.map((header) => `<th>${header}</th>`).join('');
+    const headersRowHtmlString = headersArray
+      .map((header) => `<th>${header}</th>`)
+      .join("");
 
     this.thead.innerHTML = `
       <tr>
@@ -62,35 +66,42 @@ class Table<Type extends RowData> {
     `;
   };
 
-  private initializeBody = (): void => {
+  private renderTbody = (): void => {
     const { rowsData, columns } = this.props;
 
-    this.tbody.innerHTML = '';
-    const rowsHtmlElements = rowsData
-      .map((rowData) => {
-        const rowHtmlElement = document.createElement('tr');
+    this.tbody.innerHTML = "";
+    const rowsHtmlElements = rowsData.map((rowData) => {
+      const rowHtmlElement = document.createElement("tr");
 
-        const cellsHtmlString = Object.keys(columns)
-          .map((key) => `<td>${rowData[key]}</td>`)
-          .join(' ');
+      const cellsHtmlString = Object.keys(columns)
+        .map((key) => `<td>${rowData[key]}</td>`)
+        .join(" ");
 
-        rowHtmlElement.innerHTML = cellsHtmlString;
+      rowHtmlElement.innerHTML = cellsHtmlString;
 
-        return rowHtmlElement;
-      });
+      return rowHtmlElement;
+    });
 
     this.tbody.append(...rowsHtmlElements);
   };
 
   private initialize = (): void => {
-    this.initializeHead();
-    this.initializeBody();
+    this.renderView();
 
-    this.htmlElement.className = 'table table-striped order border p-3';
-    this.htmlElement.append(
-      this.thead,
-      this.tbody,
-    );
+    this.htmlElement.className = "table table-striped order border p-3";
+    this.htmlElement.append(this.thead, this.tbody);
+  };
+
+  renderView = () => {
+    this.renderThead();
+    this.renderTbody();
+  };
+
+  updateProps = (props: Partial<TableProps<Type>>) => {
+    this.props = {
+      ...this.props,
+      ...props,
+    };
   };
 }
 
