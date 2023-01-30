@@ -16,7 +16,11 @@ export type CarProps = {
     year: number
 };
 
-const createId = (): string => String(Math.floor(Math.random() * 100000000000000));
+const createId = (): string => String(`${Math.random().toString(36).toUpperCase().slice(2, 10)
+ }-${Math.random().toString(36).toUpperCase().slice(2, 6)
+ }-${Math.random().toString(36).toUpperCase().slice(2, 6)
+ }-${Math.random().toString(36).toUpperCase().slice(2, 6)
+ }-${Math.random().toString(36).toUpperCase().slice(2, 14)}`);
 
 class CarsCollection {
     private props: CarsCollectionProps;
@@ -80,7 +84,7 @@ class CarsCollection {
         const brand = brands.find((b) => b.id === brandId);
 
         if (!model || !brand) {
-          throw new Error('Netinkami duomenys sukurti automobilį');
+          throw new Error('Bad data input to create a car');
         }
 
         const newCar: Car = {

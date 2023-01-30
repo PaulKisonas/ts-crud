@@ -2,7 +2,7 @@ export type TextFieldProps = {
     labelText: string,
     name: string,
     value: string,
-}
+};
 
 class TextField {
     private static count: number = 0;
@@ -31,11 +31,11 @@ class TextField {
     }
 
     private initialize = (): void => {
-        const {label, input, id} = this;
+        const { label, input, id } = this;
 
         label.htmlFor = id;
         label.className = 'form-label';
-                
+
         input.id = id;
         input.className = 'form-control';
 
@@ -48,11 +48,11 @@ class TextField {
     private renderView = () => {
         const { label, input, props } = this;
 
-        input.name = props.name
+        input.name = props.name;
         label.innerHTML = props.labelText;
-        
+
         input.value = props.value;
-    }
+    };
 
     public updateProps = (props: Partial<TextFieldProps>) => {
         this.props = {
@@ -64,4 +64,4 @@ class TextField {
     };
 }
 
-export default TextField
+export default TextField;

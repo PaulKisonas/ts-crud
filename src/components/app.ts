@@ -22,17 +22,19 @@ class App {
 
   private carsCollection: CarsCollection;
 
+  private brandSelect: SelectField;
+
   private selectedBrandId: string;
 
   private carsTable: Table<StringifyObjectProps<CarJoined>>;
 
-  private carForm: CarForm | undefined;
+  private carForm: CarForm;
 
   constructor(selector: string) {
     const foundElement = document.querySelector<HTMLElement>(selector);
     this.carsCollection = new CarsCollection({ cars, brands, models });
 
-    if (foundElement === null) throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
+    if (foundElement === null) throw new Error(`Element not found in selector: '${selector}'`);
 
     this.selectedBrandId = ALL_BRAND_ID;
     this.htmlElement = foundElement;
@@ -49,6 +51,28 @@ class App {
       rowsData: this.carsCollection.all.map(strProps),
       onDelete: this.handleCarDelete,
     });
+
+    this.brandSelect = new SelectField({
+      labelText: 'Brands',
+      options: [
+        { value: ALL_BRAND_ID, text: ALL_BRAND_TITLE },
+        ...brands.map(brandToOption),
+      ],
+      onChange: this.handleBrandChange,
+    });
+
+    const initialBrandId = brands[0].id;
+    this.carForm = new CarForm({
+      title: 'Create new car',
+      submitBtnText: 'Create',
+      values: {
+        brand: initialBrandId,
+        model: models.filter((m) => m.brandId === initialBrandId)[0].id,
+        price: '0',
+        year: '1990',
+      },
+      onSubmit: this.handleCreateCar,
+    });
   }
 
   private handleBrandChange = (carId: string): void => {
@@ -63,33 +87,18 @@ class App {
   };
 
   public initialize = (): void => {
-  const select = new SelectField({
-    options: [
-      { value: ALL_BRAND_ID, text: ALL_BRAND_TITLE },
-      ...brands.map(brandToOption),
-    ],
-    onChange: this.handleBrandChange,
-  });
-
-  const initialBrandId = brands[0].id;
-  this.carForm = new CarForm({
-    title: 'Sukurkite naują automobilį',
-    submitBtnText: 'Sukurti',
-    values: {
-      brand: initialBrandId,
-      model: models.filter((m) => m.brandId === initialBrandId)[0].id,
-      price: '0',
-      year: '2000',
-    },
-    onSubmit: this.handleCreateCar,
-  });
+  const uxContainer = document.createElement('div');
+  uxContainer.className = 'd-flex gap-3 align-items-start my-3';
+  uxContainer.append(
+    this.carsTable.htmlElement,
+    this.carForm.htmlElement,
+    );
 
   const container = document.createElement('div');
   container.className = 'container d-flex flex-column my-5 gap-3';
   container.append(
-    select.htmlElement,
-    this.carsTable.htmlElement,
-    this.carForm.htmlElement,
+    this.brandSelect.htmlElement,
+    uxContainer,
     );
 
     this.htmlElement.append(container);

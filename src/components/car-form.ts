@@ -81,7 +81,8 @@ class CarForm {
     this.htmlSubmitBtn.className = 'btn btn-success btn-lg';
     this.htmlSubmitBtn.type = 'submit';
 
-    this.htmlElement.className = 'card d-flex flex-column gap-3 p-3';
+    this.htmlElement.className = 'card shadow d-flex flex-column gap-3 p-3';
+    this.htmlElement.style.width = '350px';
     this.htmlElement.append(
       this.htmlFormHeader,
       this.htmlFieldsContainer,
