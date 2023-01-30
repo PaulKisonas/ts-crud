@@ -1,38 +1,92 @@
-export type Option = {
-  value: string;
-  text: string;
+export type OptionType = {
+  text: string,
+  value: string,
 };
 
-type SelectFieldProps = {
-options: Option[],
-onChange: (newValue: string) => void,
-name?: string,
-labelText?: string,
-value?: string,
+export type SelectFieldProps = {
+  name?: string,
+  labelText?: string,
+  onChange?: (newValue: string) => void,
+  options: OptionType[],
+  value?: string,
 };
 
 class SelectField {
+  private static instanceCounter = 0;
+
   private props: SelectFieldProps;
 
-  public htmlElement: HTMLSelectElement;
+  private htmlSelectElement: HTMLSelectElement;
+
+  private htmlLabelElement: HTMLLabelElement;
+
+  public htmlElement: HTMLDivElement;
 
   constructor(props: SelectFieldProps) {
-      this.htmlElement = document.createElement('select');
-      this.props = props;
+    this.props = props;
 
-      this.initialize();
+    SelectField.instanceCounter += 1;
+    this.htmlElement = document.createElement('div');
+    this.htmlSelectElement = document.createElement('select');
+    this.htmlLabelElement = document.createElement('label');
+
+    this.initialize();
+    this.renderView();
   }
 
   private initialize = () => {
-      this.htmlElement.className = 'form-select';
-      this.htmlElement.innerHTML = this.props.options
-      .map(({ value, text }) => `
-      <option value="${value}">${text}</option>
-      `).join('');
-      this.htmlElement.addEventListener(
-          'change',
-          () => this.props.onChange(this.htmlElement.value),
-      );
+    const elementId = `select-${SelectField.instanceCounter}`;
+
+    this.htmlLabelElement.setAttribute('for', elementId);
+
+    this.htmlSelectElement.className = 'form-select';
+
+    this.htmlSelectElement.id = elementId;
+
+    this.htmlElement.className = 'form-group';
+    this.htmlElement.append(
+      this.htmlLabelElement,
+      this.htmlSelectElement,
+    );
+  };
+
+  private renderSelectOptionsView = (): void => {
+    const { options, value } = this.props;
+
+    const optionsHtmlElements = options.map((option) => {
+      const element = document.createElement('option');
+      element.innerHTML = option.text;
+      element.value = option.value;
+      element.selected = option.value === value;
+
+      return element;
+    });
+
+    this.htmlSelectElement.innerHTML = '';
+    this.htmlSelectElement.append(...optionsHtmlElements);
+  };
+
+  private renderView = (): void => {
+    const { labelText, onChange, name } = this.props;
+
+    this.htmlLabelElement.innerHTML = labelText!;
+
+    if (onChange) {
+      this.htmlSelectElement.addEventListener('change', () => onChange(this.htmlSelectElement.value));
+    }
+    if (name) {
+      this.htmlSelectElement.name = name;
+    }
+    this.renderSelectOptionsView();
+  };
+
+  public updateProps = (newProps: Partial<SelectFieldProps>): void => {
+    this.props = {
+      ...this.props,
+      ...newProps,
+    };
+
+    this.renderView();
   };
 }
 

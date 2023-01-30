@@ -1,72 +1,96 @@
-import Car from '../types/car';
-import Model from '../types/model';
-import Brand from '../types/brand';
-import CarJoined from '../types/car-joined';
-import brands from '../data/brands';
+import type Car from '../types/car';
+import type Brand from '../types/brand';
+import type Model from '../types/model';
+import type CarJoined from '../types/car-joined';
 
 type CarsCollectionProps = {
-  cars: Car[],
-  brands: Brand[],
-  models: Model[],
+    cars: Car[],
+    brands: Brand[],
+    models: Model[],
 };
+
+export type CarProps = {
+    brandId: string,
+    modelId: string,
+    price: number,
+    year: number
+};
+
+const createId = (): string => String(Math.floor(Math.random() * 100000000000000));
 
 class CarsCollection {
-  private props: CarsCollectionProps;
+    private props: CarsCollectionProps;
 
-  private privateBrands: Brand[];
+    constructor(props: CarsCollectionProps) {
+        this.props = props;
+    }
 
-  constructor(props: CarsCollectionProps) {
-    this.props = props;
-    this.privateBrands = JSON.parse(JSON.stringify(brands));
-  }
+    private joinCars = ({ modelId, ...car }: Car) => {
+        const { brands, models } = this.props;
+        const carsModel = models.find((model) => model.id === modelId);
+        const carsBrand = brands.find((brand) => brand.id === carsModel?.brandId);
 
-  private joinCars = ({ modelId, ...car}: Car) => {
-    const { models } = this.props;
-    const carModel = models.find((model) => model.id === modelId);
-    const carBrand = brands.find((brand) => brand.id === carModel?.brandId);
-
-    return {
-      ...car,
-      brand: (carBrand && carBrand.title) ?? 'unknown',
-      model: (carModel && carModel.title) ?? 'unknown',
+        return {
+            ...car,
+            brand: (carsBrand && carsBrand.title) ?? 'unknown',
+            model: (carsModel && carsModel.title) ?? 'unknown',
+        };
     };
-  };
 
-  public get all(): CarJoined[] {
-    return this.props.cars.map(this.joinCars);
-  }
+    public get all(): CarJoined[] {
+        return this.props.cars.map(this.joinCars);
+    }
 
-  getByBrandId = (brandId: string): CarJoined[] => {
-    const { cars, models } = this.props;
+    public getByBrandId = (brandId: string): CarJoined[] => {
+        const { cars, models } = this.props;
 
-    const brandModelIds = models
-    .filter((model) => model.brandId === brandId)
-    .map((model) => model.id);
+        const brandModelIds = models
+        .filter((model) => model.brandId === brandId)
+        .map((model) => model.id);
 
-    const carsModelIds = cars
-    .filter((car) => brandModelIds
-    .includes(car.modelId))
-    .map(this.joinCars);
+        const carsModelIds = cars
+        .filter((car) => brandModelIds
+        .includes(car.modelId))
+        .map(this.joinCars);
 
-    return carsModelIds;
-};
+        return carsModelIds;
+    };
 
-getBrandTitleById = (brandId: string) => {
-  const foundBrand = this.privateBrands.find((b) => b.id === brandId);
+    public getByBrandTitleId = (brandId: string) => {
+        const { brands } = this.props;
 
-if (foundBrand === undefined) throw new Error(`Brand is not found "${brandId}"`);
+        const foundBrand = brands.find((b) => b.id === brandId);
 
-return foundBrand;
-};
+      if (foundBrand === undefined) throw new Error(`Brand is not found "${brandId}"`);
 
-deleteCarById = (brandId: string) => {
-  const { cars, models } = this.props;
+      return foundBrand;
+    };
 
-  this.props.cars = cars.filter((car) => car.id !== brandId);
-  this.props.models = models
-  .filter((model) => model.brandId !== brandId);
-};
+    public deleteCarById = (brandId: string) => {
+        const { cars, models } = this.props;
 
+        this.props.cars = cars.filter((car) => car.id !== brandId);
+        this.props.models = models
+        .filter((model) => model.brandId !== brandId);
+    };
+
+    public add = ({ modelId, brandId, ...carProps }: CarProps): void => {
+        const { models, brands, cars } = this.props;
+        const model = models.find((m) => m.id === modelId);
+        const brand = brands.find((b) => b.id === brandId);
+
+        if (!model || !brand) {
+          throw new Error('Netinkami duomenys sukurti automobilį');
+        }
+
+        const newCar: Car = {
+          id: createId(),
+          ...carProps,
+          modelId,
+        };
+
+        cars.push(newCar);
+      };
 }
 
 export default CarsCollection;
