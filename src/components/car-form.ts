@@ -1,4 +1,3 @@
-type CarFormProps = {}
 import TextField from './text-field';
 import SelectField from './select-field';
 import brands from '../data/brands';
@@ -11,15 +10,31 @@ export type Values = {
     year: string,
   };
 
+type CarFormProps = {
+    values: Values,
+    title: string,
+    submitBtnText: string,
+};
+
+type Fields = {
+    brand: SelectField,
+    model: SelectField,
+    price: TextField,
+    year: TextField,
+  };
 
 class CarForm {
     private props: CarFormProps;
 
     public htmlElement: HTMLFormElement;
 
+    private fields: Fields;
+
     constructor(props: CarFormProps) {
         this.props = props
         this.htmlElement = document.createElement('form')
+
+
 
         this.initialize();
         this.renderView();
@@ -33,14 +48,13 @@ class CarForm {
 
     };
 
+    public updateProps(props: Partial<CarFormProps>) {
+        this.props = {
+            ...this.props,
+            ...props,
+        };
 
-public updateProps(props: Partial<CarFormProps>) {
-    this.props = {
-        ...this.props,
-        ...props,
-    };
-
-    this.renderView();
+        this.renderView();
     };
 }
 
